@@ -1,0 +1,11 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <!--<item name="android:activatedBackgroundIndicator">@drawable/selected_day_background</item>-->
+    </style>
+
+    <drawable name="selected_day_background">#ff0092f4</drawable>
+
+</resources>
