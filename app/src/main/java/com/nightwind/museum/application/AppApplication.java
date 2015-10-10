@@ -28,7 +28,7 @@ public class AppApplication extends Application {
     public static void initImageLoader(Context context) {
         File cacheDir = StorageUtils.getOwnCacheDirectory(context, "Museum/Cache");//获取到缓存的目录地址
         Log.d("cacheDir", cacheDir.getPath());
-        //创建配置ImageLoader(所有的选项都是可选的,只使用那些你真的想定制)，这个可以设定在APPLACATION里面，设置为全局的配置参数
+        //创建配置ImageLoader(所有的选项都是可选的,只使用那些你真的想定制)，这个可以设定在APPLICATION里面，设置为全局的配置参数
         ImageLoaderConfiguration config = new ImageLoaderConfiguration
                 .Builder(context)
                 //.memoryCacheExtraOptions(480, 800) // max width, max height，即保存的每个缓存文件的最大长宽
@@ -41,7 +41,7 @@ public class AppApplication extends Application {
                         ///.discCacheSize(50 * 1024 * 1024)
 //				.diskCacheFileNameGenerator(new Md5FileNameGenerator())//将保存的时候的URI名称用MD5 加密
                         //.discCacheFileNameGenerator(new HashCodeFileNameGenerator())//将保存的时候的URI名称用HASHCODE加密
-                .tasksProcessingOrder(QueueProcessingType.LIFO)
+                .tasksProcessingOrder(QueueProcessingType.FIFO)
                         //.discCacheFileCount(100) //缓存的File数量
                 .diskCache(new UnlimitedDiscCache(cacheDir))//自定义缓存路径
                         //.defaultDisplayImageOptions(DisplayImageOptions.createSimple())

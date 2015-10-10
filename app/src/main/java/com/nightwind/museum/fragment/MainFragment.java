@@ -1,6 +1,7 @@
 package com.nightwind.museum.fragment;
 
 
+import android.media.Image;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nightwind.museum.MainActivity;
@@ -33,8 +35,8 @@ public class MainFragment extends MainActivity.PlaceholderFragment {
     private RecyclerView.LayoutManager mLayoutManager;
 
     private List<Article> mArticleList = new ArrayList<>();
-    private String[] mImageUrls = new String[] {"http://nw4869.xyz/img/slide/1.jpg", "http://nw4869.xyz/img/slide/2.jpg",
-            "http://nw4869.xyz/img/slide/3.jpg", "http://nw4869.xyz/img/slide/4.jpg"};
+    private String[] mImageUrls = new String[] {"http://www.nw4869.cc/image/desktop1.jpg", "http://www.nw4869.cc/image/desktop2.jpg",
+            "http://www.nw4869.cc/image/desktop3.jpg", "http://www.nw4869.cc/image/desktop4.jpg"};
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
     private DisplayImageOptions slideImageOptions = Options.getSlideImageOptions();
@@ -48,9 +50,10 @@ public class MainFragment extends MainActivity.PlaceholderFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mArticleList.add(new Article("Title1", "Content1"));
-        mArticleList.add(new Article("Title2", "Content2"));
-        mArticleList.add(new Article("Title3", "Content3"));
+        //Dummy data
+        for (int i = 0; i < 10; i++) {
+            mArticleList.add(new Article("Title" + i, "Content" + i));
+        }
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
@@ -110,8 +113,9 @@ public class MainFragment extends MainActivity.PlaceholderFragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            Article article = mArticleList.get(position);
             if (holder instanceof NormalViewHolder) {
+                //从 position = 1 开始
+                Article article = mArticleList.get(position - 1);
                 NormalViewHolder viewHolder = (NormalViewHolder) holder;
                 viewHolder.title.setText(article.getTitle());
                 viewHolder.content.setText(article.getContent());
@@ -119,11 +123,40 @@ public class MainFragment extends MainActivity.PlaceholderFragment {
                 //头部slide image view
                 HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
 
-                ViewPager viewPage = viewHolder.imageViewPager;
-                final ImageView[] imageViews = new ImageView[mImageUrls.length];
-                for (int i = 0; i < mImageUrls.length; i++) {
+                //点点s
+                ViewGroup viewGroup = viewHolder.pointsViewGroup;
+                viewGroup.removeAllViews();
+
+                final ImageView[] tips = new ImageView[mImageUrls.length];
+                for (int i = 0; i < tips.length; i++) {
                     ImageView imageView = new ImageView(getActivity());
-                    imageViews[i] = imageView;
+                    imageView.setLayoutParams(new ViewGroup.LayoutParams(10, 10));
+                    tips[i] = imageView;
+                    if (i == 0) {
+                        tips[i].setBackgroundResource(R.drawable.page_indicator_focused);
+                    } else {
+                        tips[i].setBackgroundResource(R.drawable.page_indicator_unfocused);
+                    }
+                    //用LinearLayout包装一下实现padding
+                    LinearLayout linerLayout = new LinearLayout(getActivity());
+                    LinearLayout.LayoutParams linerLayoutParams = new LinearLayout.LayoutParams(
+                            10,
+                            10,
+                            1);
+                    linerLayout.setPadding(10, 0, 10, 0);
+                    linerLayout.addView(imageView, linerLayoutParams);
+
+                    viewGroup.addView(linerLayout);
+                }
+
+                //图片s
+                ViewPager viewPage = viewHolder.imageViewPager;
+                final View[] images = new View[mImageUrls.length];
+                for (int i = 0; i < mImageUrls.length; i++) {
+//                    ImageView imageView = new ImageView(getActivity());
+                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_slide_image, null, false);
+                    ImageView imageView = (ImageView) view.findViewById(R.id.image);
+                    images[i] = view;
                     String imageUrl = mImageUrls[i % mImageUrls.length];
                     //加载图片
                     imageLoader.displayImage(imageUrl, imageView, slideImageOptions);
@@ -143,26 +176,49 @@ public class MainFragment extends MainActivity.PlaceholderFragment {
 
                     @Override
                     public Object instantiateItem(ViewGroup container, int position) {
-                        ImageView imageView = imageViews[position % imageViews.length];
+                        View imageView = images[position % images.length];
                         container.addView(imageView);
                         return imageView;
                     }
 
                     @Override
                     public void destroyItem(ViewGroup container, int position, Object object) {
-                        container.removeView(imageViews[position % imageViews.length]);
+                        container.removeView(images[position % images.length]);
                     }
                 });
 
                 // 使可以左右滑动
-                viewPage.setCurrentItem(imageViews.length * 100);
+                viewPage.setCurrentItem(images.length * 100);
 
+                //点点背景
+                viewPage.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+
+                    /**
+                     * 设置选中的tip的背景
+                     * @param selectItems
+                     */
+                    private void setImageBackground(int selectItems){
+                        for(int i = 0; i< tips.length; i++){
+                            if(i == selectItems){
+                                tips[i].setBackgroundResource(R.drawable.page_indicator_focused);
+                            }else{
+                                tips[i].setBackgroundResource(R.drawable.page_indicator_unfocused);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        setImageBackground(position % tips.length);
+                    }
+                });
             }
         }
 
         @Override
         public int getItemCount() {
-            return mArticleList.size();
+            // position == 0 作为header
+            return mArticleList.size() + 1;
         }
     }
     public static class NormalViewHolder extends RecyclerView.ViewHolder {
@@ -188,6 +244,7 @@ public class MainFragment extends MainActivity.PlaceholderFragment {
         public HeaderViewHolder(View itemView) {
             super(itemView);
             imageViewPager = (ViewPager) itemView.findViewById(R.id.image_slide_page);
+            pointsViewGroup = (ViewGroup) itemView.findViewById(R.id.viewGroup);
         }
     }
 

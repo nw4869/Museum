@@ -49,7 +49,7 @@ public class Article {
     public Article() {
     }
 
-    public Article(String content, String title) {
+    public Article(String title, String content) {
         this.content = content;
         this.title = title;
     }

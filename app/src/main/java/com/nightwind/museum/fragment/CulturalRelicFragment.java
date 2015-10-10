@@ -37,8 +37,10 @@ public class CulturalRelicFragment extends MainActivity.PlaceholderFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mCulturalRelicList.add(new CulturalRelic("Hello"));
-        mCulturalRelicList.add(new CulturalRelic("World"));
+        // Dummy data
+        for (int i = 0; i < 10; i++) {
+            mCulturalRelicList.add(new CulturalRelic("CulturalRelic" + i));
+        }
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cultural_relic, container, false);

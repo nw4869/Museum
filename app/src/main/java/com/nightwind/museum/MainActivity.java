@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
+import com.nightwind.museum.activity.BeamActivity;
 import com.nightwind.museum.fragment.CulturalRelicFragment;
 import com.nightwind.museum.fragment.MainFragment;
 import com.nightwind.museum.fragment.NavigationDrawerFragment;
@@ -106,6 +107,10 @@ public class MainActivity extends ActionBarActivity
         } else if (id == R.id.action_scan) {
             Intent intent = new Intent(this, ScannerActivity.class);
             startActivityForResult(intent, REQUEST_SCANNER);
+            return true;
+        } else if (id == R.id.action_beam) {
+            Intent intent = new Intent(this, BeamActivity.class);
+            startActivity(intent);
             return true;
         }
 
